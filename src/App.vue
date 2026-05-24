@@ -21,6 +21,9 @@ import AttendancesPage from './modules/students/pages/AttendancesPage.vue'
 import ResultsPage from './modules/students/pages/ResultsPage.vue'
 import PaymentsPage from './modules/payments/pages/PaymentsPage.vue'
 import ReportsPage from './modules/payments/pages/ReportsPage.vue'
+import PaymentServiceShell from './PaymentServiceShell.vue'
+
+const showPaymentService = ref(false)
 
 const menuItems = [
   { key: 'home', label: 'Home', group: 'System' },
@@ -32,6 +35,7 @@ const menuItems = [
   { key: 'results', label: 'Results', group: 'Student, Attendance & Results' },
   { key: 'payments', label: 'Payments', group: 'Payment & Report' },
   { key: 'reports', label: 'Reports', group: 'Payment & Report' },
+  { key: 'payment-admin', label: 'Payment Admin', group: 'Payment Service' },
 ]
 
 const pages = {
@@ -92,7 +96,14 @@ const ActiveComponent = computed(() => pages[activePage.value] ?? HomeView)
 </script>
 
 <template>
-  <a-layout class="app-shell">
+  <!-- PaymentServiceShell renders full screen, no Ant Design wrapper -->
+  <PaymentServiceShell 
+    v-if="showPaymentService" 
+    @exit="showPaymentService = false" 
+  />
+  
+  <!-- Main App Shell (hidden when in Payment Service) -->
+  <a-layout v-else class="app-shell">
     <a-layout-sider
       class="app-sidebar"
       width="260"
@@ -111,7 +122,13 @@ const ActiveComponent = computed(() => pages[activePage.value] ?? HomeView)
         class="sidebar-menu"
         mode="inline"
         :selected-keys="[activePage]"
-        @click="({ key }) => (activePage = key)"
+        @click="({ key }) => {
+          if (key === 'payment-admin') {
+            showPaymentService = true
+          } else {
+            activePage = key
+          }
+        }"
       >
         <a-menu-item-group key="system" title="System">
           <a-menu-item key="home" :icon="h(HomeOutlined)">Home</a-menu-item>
@@ -129,9 +146,14 @@ const ActiveComponent = computed(() => pages[activePage.value] ?? HomeView)
           <a-menu-item key="results" :icon="h(TrophyOutlined)">Results</a-menu-item>
         </a-menu-item-group>
 
-        <a-menu-item-group key="payment" title="Payment &amp; Report">
-          <a-menu-item key="payments" :icon="h(CreditCardOutlined)">Payments</a-menu-item>
-          <a-menu-item key="reports" :icon="h(BarChartOutlined)">Reports</a-menu-item>
+        <a-menu-item-group key="payment" title="Payment & Report Service">
+          <a-menu-item key="payments">Payments</a-menu-item>
+          <a-menu-item key="reports">Reports</a-menu-item>
+          <a-menu-item key="payment-admin" style="color:#2E7D32;font-weight:700">
+            <span style="display:flex;align-items:center;gap:6px">
+              <span>⚡</span> Payment Admin
+            </span>
+          </a-menu-item>
         </a-menu-item-group>
       </a-menu>
 

@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const tokenStorageKey = 'educenter_access_token'
+const tokenStorageKey = 'educenter_token'
 
 export function createHttpClient(baseURL) {
   const client = axios.create({
