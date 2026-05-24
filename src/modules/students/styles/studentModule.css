@@ -1,0 +1,158 @@
+.student-module {
+  display: grid;
+  gap: 24px;
+}
+
+.module-hero {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 24px 28px;
+  border: 1px solid #dbeafe;
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(239, 246, 255, 0.96)),
+    #ffffff;
+}
+
+.module-hero__body {
+  max-width: 760px;
+}
+
+.module-hero__body h2 {
+  margin: 8px 0 10px;
+  color: #0f172a;
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1.05;
+}
+
+.module-hero__body p {
+  margin: 0;
+  color: #475569;
+}
+
+.module-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.module-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.module-metric-card {
+  min-height: 118px;
+  padding: 18px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.module-metric-label {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.module-metric-value {
+  margin-top: 8px;
+  color: #111827;
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.module-metric-footnote {
+  margin-top: 6px;
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+.module-table-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.module-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.module-search {
+  max-width: 440px;
+  flex: 1 1 320px;
+}
+
+.entity-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.entity-cell__meta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.entity-cell__meta strong {
+  color: #111827;
+  font-weight: 700;
+}
+
+.entity-cell__meta span {
+  overflow: hidden;
+  color: #64748b;
+  font-size: 12px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.entity-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.entity-note {
+  color: #64748b;
+  font-size: 12px;
+}
+
+.form-hint {
+  margin-top: 4px;
+  color: #64748b;
+  font-size: 12px;
+}
+
+@media (max-width: 960px) {
+  .module-hero {
+    flex-direction: column;
+  }
+
+  .module-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .module-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .module-hero__body h2 {
+    font-size: 28px;
+  }
+}

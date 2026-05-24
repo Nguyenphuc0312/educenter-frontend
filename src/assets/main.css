@@ -1,0 +1,279 @@
+:root {
+  color: #1f2937;
+  background: #eef2f7;
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  background:
+    linear-gradient(135deg, rgba(224, 242, 254, 0.72), rgba(248, 250, 252, 0.92)),
+    #eef2f7;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+#app {
+  min-height: 100vh;
+}
+
+.app-shell {
+  min-height: 100vh;
+}
+
+.app-sidebar {
+  background: #111827 !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.brand {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  min-height: 76px;
+  padding: 18px;
+  color: #ffffff;
+}
+
+.brand-mark {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border-radius: 8px;
+  background: #0ea5e9;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.brand strong,
+.brand span {
+  display: block;
+}
+
+.brand strong {
+  font-size: 15px;
+  line-height: 1.2;
+}
+
+.brand span {
+  margin-top: 4px;
+  color: #9ca3af;
+  font-size: 12px;
+}
+
+.sidebar-menu {
+  background: transparent !important;
+  color: #d1d5db;
+  border-inline-end: none !important;
+}
+
+.sidebar-menu .ant-menu-item-group-title {
+  color: #94a3b8;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.sidebar-menu .ant-menu-item {
+  color: #d1d5db;
+}
+
+.sidebar-menu .ant-menu-item-selected {
+  background: #0ea5e9 !important;
+  color: #ffffff !important;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: auto !important;
+  min-height: 76px;
+  line-height: 1.2 !important;
+  overflow: visible;
+  padding: 16px 28px;
+  background: rgba(255, 255, 255, 0.96) !important;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.app-header h1 {
+  margin: 2px 0 0;
+  color: #111827;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.header-label,
+.eyebrow {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.app-content {
+  padding: 28px;
+}
+
+.home-page {
+  display: grid;
+  gap: 24px;
+}
+
+.home-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+  gap: 24px;
+  align-items: stretch;
+  padding: 32px;
+  border: 1px solid #dbeafe;
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(239, 246, 255, 0.94)),
+    #ffffff;
+}
+
+.hero-copy h2 {
+  max-width: 780px;
+  margin: 8px 0 12px;
+  color: #0f172a;
+  font-size: clamp(32px, 5vw, 56px);
+  font-weight: 800;
+  line-height: 1;
+}
+
+.hero-copy p:last-child {
+  max-width: 680px;
+  margin: 0;
+  color: #475569;
+  font-size: 17px;
+}
+
+.service-status {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.service-status div,
+.module-card,
+.placeholder-page {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.service-status div {
+  padding: 16px;
+}
+
+.service-status span,
+.service-status strong {
+  display: block;
+}
+
+.service-status span {
+  color: #64748b;
+  font-size: 12px;
+}
+
+.service-status strong {
+  margin-top: 6px;
+  color: #111827;
+  font-size: 15px;
+}
+
+.module-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.module-card {
+  min-height: 168px;
+  padding: 22px;
+}
+
+.module-code {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: #e0f2fe;
+  color: #0369a1;
+  font-weight: 800;
+}
+
+.module-card h3,
+.placeholder-page h2 {
+  margin: 18px 0 8px;
+  color: #111827;
+  font-weight: 700;
+}
+
+.module-card p,
+.placeholder-page p {
+  margin: 0;
+  color: #64748b;
+}
+
+.placeholder-page {
+  min-height: 360px;
+  padding: 28px;
+}
+
+.placeholder-page h2 {
+  font-size: 32px;
+}
+
+@media (max-width: 960px) {
+  .home-hero,
+  .module-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .app-content {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 640px) {
+  .app-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px 18px;
+  }
+
+  .home-hero {
+    padding: 22px;
+  }
+
+  .service-status {
+    grid-template-columns: 1fr;
+  }
+}
