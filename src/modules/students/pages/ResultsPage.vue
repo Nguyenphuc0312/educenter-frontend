@@ -146,7 +146,7 @@ async function loadResults() {
 }
 
 async function reloadAll() {
-  await Promise.all([loadStudents(), loadResults()])
+  await Promise.allSettled([loadStudents(), loadResults()])
 }
 
 async function submitForm() {
@@ -214,39 +214,67 @@ onMounted(reloadAll)
       </div>
 
       <div class="module-hero__actions">
-        <a-button
-          :icon="h(ReloadOutlined)"
-          :loading="loading || studentLoading"
-          @click="reloadAll"
-        >
-          Tải lại
-        </a-button>
-        <a-button type="primary" :icon="h(PlusOutlined)" @click="openCreateModal">
-          Thêm kết quả
-        </a-button>
+        <span class="module-hero__actions-label">Quick actions</span>
+        <span class="module-hero__actions-note">
+          Review scores, classify outcomes, and keep notes for each course.
+        </span>
+        <div class="module-hero__actions-stack">
+          <a-button
+            :icon="h(ReloadOutlined)"
+            :loading="loading || studentLoading"
+            @click="reloadAll"
+          >
+            Tải lại
+          </a-button>
+          <a-button type="primary" :icon="h(PlusOutlined)" @click="openCreateModal">
+            Thêm kết quả
+          </a-button>
+        </div>
       </div>
     </a-card>
 
     <div class="module-metrics">
       <a-card class="module-metric-card" :bordered="false">
-        <div class="module-metric-label">Tổng kết quả</div>
-        <div class="module-metric-value">{{ totalResults }}</div>
-        <div class="module-metric-footnote">Toàn bộ bản ghi</div>
+        <div class="metric-card-header">
+          <div class="metric-icon-circle metric-icon-circle--blue">
+            <TrophyOutlined />
+          </div>
+          <span class="metric-trend-badge metric-trend-badge--blue">Tổng cộng</span>
+        </div>
+        <div class="metric-card-value">{{ totalResults }}</div>
+        <div class="metric-card-label">Tổng kết quả</div>
       </a-card>
       <a-card class="module-metric-card" :bordered="false">
-        <div class="module-metric-label">Điểm trung bình</div>
-        <div class="module-metric-value">{{ formatScore(averageScore) }}</div>
-        <div class="module-metric-footnote">Thang điểm 10</div>
+        <div class="metric-card-header">
+          <div :class="['metric-icon-circle', averageScore >= 7 ? 'metric-icon-circle--green' : 'metric-icon-circle--amber']">
+            <i class="metric-icon-symbol">📈</i>
+          </div>
+          <span :class="['metric-trend-badge', averageScore >= 7 ? 'metric-trend-badge--green' : 'metric-trend-badge--amber']">
+            Thang điểm 10
+          </span>
+        </div>
+        <div class="metric-card-value">{{ formatScore(averageScore) }}</div>
+        <div class="metric-card-label">Điểm trung bình</div>
       </a-card>
       <a-card class="module-metric-card" :bordered="false">
-        <div class="module-metric-label">Đạt</div>
-        <div class="module-metric-value">{{ passedCount }}</div>
-        <div class="module-metric-footnote">Score >= 5</div>
+        <div class="metric-card-header">
+          <div class="metric-icon-circle metric-icon-circle--teal">
+            <i class="metric-icon-symbol">✔</i>
+          </div>
+          <span class="metric-trend-badge metric-trend-badge--teal">Đạt (Score >= 5)</span>
+        </div>
+        <div class="metric-card-value">{{ passedCount }}</div>
+        <div class="metric-card-label">Số học viên Đạt</div>
       </a-card>
       <a-card class="module-metric-card" :bordered="false">
-        <div class="module-metric-label">Khá - Giỏi</div>
-        <div class="module-metric-value">{{ highScoreCount }}</div>
-        <div class="module-metric-footnote">Score >= 8</div>
+        <div class="metric-card-header">
+          <div class="metric-icon-circle metric-icon-circle--violet">
+            <i class="metric-icon-symbol">★</i>
+          </div>
+          <span class="metric-trend-badge metric-trend-badge--violet">Giỏi (Score >= 8)</span>
+        </div>
+        <div class="metric-card-value">{{ highScoreCount }}</div>
+        <div class="metric-card-label">Số học viên Khá - Giỏi</div>
       </a-card>
     </div>
 
@@ -259,9 +287,35 @@ onMounted(reloadAll)
           :prefix="h(SearchOutlined)"
           allow-clear
         />
+        <div class="toolbar-filters">
+          <button
+            :class="['filter-pill', searchText === '' ? 'filter-pill--active' : '']"
+            @click="searchText = ''"
+          >
+            Tất cả
+          </button>
+          <button
+            :class="['filter-pill', searchText.trim().toLowerCase() === 'passed' ? 'filter-pill--active-green filter-pill' : '']"
+            @click="searchText = 'Passed'"
+          >
+            <span class="filter-pill__dot" style="background:#16a34a"></span>
+            Đạt (Passed)
+          </button>
+          <button
+            :class="['filter-pill', searchText.trim().toLowerCase() === 'failed' ? 'filter-pill--active-rose filter-pill' : '']"
+            @click="searchText = 'Failed'"
+          >
+            <span class="filter-pill__dot" style="background:#e11d48"></span>
+            Trượt (Failed)
+          </button>
+        </div>
+        <div class="module-toolbar-count">
+          Hiển thị <strong>{{ filteredResults.length }}</strong> / {{ totalResults }} kết quả
+        </div>
       </div>
 
       <a-table
+        class="module-table"
         :columns="columns"
         :data-source="filteredResults"
         :loading="loading || studentLoading"
@@ -287,7 +341,14 @@ onMounted(reloadAll)
           </template>
 
           <template v-else-if="column.key === 'score'">
-            <a-tag color="blue">{{ formatScore(record.score) }}/10</a-tag>
+            <div class="score-cell">
+              <a-tag color="blue" style="margin-right: 0; width: fit-content;">
+                {{ formatScore(record.score) }}/10
+              </a-tag>
+              <div class="score-bar">
+                <div class="score-bar__fill" :style="{ width: (record.score * 10) + '%' }"></div>
+              </div>
+            </div>
           </template>
 
           <template v-else-if="column.key === 'outcome'">
@@ -306,7 +367,7 @@ onMounted(reloadAll)
 
           <template v-else-if="column.key === 'actions'">
             <div class="entity-actions">
-              <a-button type="link" @click="openEditModal(record)">
+              <a-button type="text" size="small" @click="openEditModal(record)">
                 <EditOutlined />
                 Sửa
               </a-button>
@@ -316,7 +377,7 @@ onMounted(reloadAll)
                 cancel-text="Huỷ"
                 @confirm="() => handleDelete(record)"
               >
-                <a-button type="link" danger>
+                <a-button type="text" size="small" danger>
                   <DeleteOutlined />
                   Xoá
                 </a-button>
@@ -339,6 +400,9 @@ onMounted(reloadAll)
       @cancel="closeModal"
     >
       <a-form ref="formRef" :model="formState" :rules="rules" layout="vertical">
+        <a-divider orientation="left">
+          <span class="form-section-label">Thông tin kết quả học tập</span>
+        </a-divider>
         <a-row :gutter="16">
           <a-col :xs="24" :md="12">
             <a-form-item label="Học viên" name="studentId">

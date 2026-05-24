@@ -25,13 +25,7 @@ Dung chung:
 
 ## API Base URL
 
-Mac dinh frontend goi qua API Gateway:
-
-```env
-VITE_API_BASE_URL=http://localhost:5000/api
-```
-
-Khi test truc tiep tung service, co the override rieng:
+Mac dinh frontend goi thang tung service:
 
 ```env
 VITE_COURSE_API_URL=http://localhost:5001/api
@@ -39,7 +33,7 @@ VITE_STUDENT_API_URL=http://localhost:5002/api
 VITE_PAYMENT_API_URL=http://localhost:5003/api
 ```
 
-Sao chep `.env.example` thanh `.env.local` tren may cua minh neu can doi IP/port.
+Neu demo tren nhieu may, doi `localhost` thanh IP LAN tuong ung va luu vao `.env.local`.
 
 ## Run
 

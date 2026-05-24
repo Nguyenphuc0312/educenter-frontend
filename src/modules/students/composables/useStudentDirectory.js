@@ -26,6 +26,11 @@ export function useStudentDirectory() {
     studentLoading.value = true
     try {
       students.value = await getStudents()
+      return students.value
+    } catch (error) {
+      students.value = []
+      console.error('Failed to load student directory.', error)
+      return []
     } finally {
       studentLoading.value = false
     }

@@ -205,35 +205,61 @@ onMounted(loadStudents)
       </div>
 
       <div class="module-hero__actions">
-        <a-button :icon="h(ReloadOutlined)" :loading="loading" @click="loadStudents">
-          Tải lại
-        </a-button>
-        <a-button type="primary" :icon="h(PlusOutlined)" @click="openCreateModal">
-          Thêm học viên
-        </a-button>
+        <span class="module-hero__actions-label">Quick actions</span>
+        <span class="module-hero__actions-note">
+          Manage student profiles and keep the dataset ready for the other modules.
+        </span>
+        <div class="module-hero__actions-stack">
+          <a-button :icon="h(ReloadOutlined)" :loading="loading" @click="loadStudents">
+            Tải lại
+          </a-button>
+          <a-button type="primary" :icon="h(PlusOutlined)" @click="openCreateModal">
+            Thêm học viên
+          </a-button>
+        </div>
       </div>
     </a-card>
 
     <div class="module-metrics">
       <a-card class="module-metric-card" :bordered="false">
-        <div class="module-metric-label">Tổng học viên</div>
-        <div class="module-metric-value">{{ totalStudents }}</div>
-        <div class="module-metric-footnote">Toàn bộ dữ liệu hiện có</div>
+        <div class="metric-card-header">
+          <div class="metric-icon-circle metric-icon-circle--blue">
+            <UserOutlined />
+          </div>
+          <span class="metric-trend-badge metric-trend-badge--blue">Tổng cộng</span>
+        </div>
+        <div class="metric-card-value">{{ totalStudents }}</div>
+        <div class="metric-card-label">Tổng học viên</div>
       </a-card>
       <a-card class="module-metric-card" :bordered="false">
-        <div class="module-metric-label">Đang hoạt động</div>
-        <div class="module-metric-value">{{ activeStudents }}</div>
-        <div class="module-metric-footnote">Trạng thái Active</div>
+        <div class="metric-card-header">
+          <div class="metric-icon-circle metric-icon-circle--green">
+            <i class="metric-icon-symbol">✔</i>
+          </div>
+          <span class="metric-trend-badge metric-trend-badge--green">Active</span>
+        </div>
+        <div class="metric-card-value">{{ activeStudents }}</div>
+        <div class="metric-card-label">Đang hoạt động</div>
       </a-card>
       <a-card class="module-metric-card" :bordered="false">
-        <div class="module-metric-label">Ngừng hoạt động</div>
-        <div class="module-metric-value">{{ inactiveStudents }}</div>
-        <div class="module-metric-footnote">Trạng thái Inactive</div>
+        <div class="metric-card-header">
+          <div class="metric-icon-circle metric-icon-circle--amber">
+            <i class="metric-icon-symbol">✖</i>
+          </div>
+          <span class="metric-trend-badge metric-trend-badge--amber">Inactive</span>
+        </div>
+        <div class="metric-card-value">{{ inactiveStudents }}</div>
+        <div class="metric-card-label">Ngừng hoạt động</div>
       </a-card>
       <a-card class="module-metric-card" :bordered="false">
-        <div class="module-metric-label">Đang hiển thị</div>
-        <div class="module-metric-value">{{ visibleStudents }}</div>
-        <div class="module-metric-footnote">Kết quả sau khi lọc</div>
+        <div class="metric-card-header">
+          <div class="metric-icon-circle metric-icon-circle--violet">
+            <i class="metric-icon-symbol">🔍</i>
+          </div>
+          <span class="metric-trend-badge metric-trend-badge--violet">Kết quả lọc</span>
+        </div>
+        <div class="metric-card-value">{{ visibleStudents }}</div>
+        <div class="metric-card-label">Đang hiển thị</div>
       </a-card>
     </div>
 
@@ -246,10 +272,33 @@ onMounted(loadStudents)
           :prefix="h(SearchOutlined)"
           allow-clear
         />
+        <div class="toolbar-filters">
+          <button
+            :class="['filter-pill', searchText === '' ? 'filter-pill--active' : '']"
+            @click="searchText = ''"
+          >Tất cả</button>
+          <button
+            :class="['filter-pill', searchText === 'active' ? 'filter-pill--active-green filter-pill' : '']"
+            @click="searchText = 'active'"
+          >
+            <span class="filter-pill__dot" style="background:#16a34a"></span>
+            Đang hoạt động
+          </button>
+          <button
+            :class="['filter-pill', searchText === 'inactive' ? 'filter-pill--active-amber filter-pill' : '']"
+            @click="searchText = 'inactive'"
+          >
+            <span class="filter-pill__dot" style="background:#d97706"></span>
+            Ngừng hoạt động
+          </button>
+        </div>
+        <div class="module-toolbar-count">
+          Hiển thị <strong>{{ visibleStudents }}</strong> / {{ totalStudents }}
+        </div>
       </div>
 
       <a-table
-        class="students-table"
+        class="module-table"
         :columns="columns"
         :data-source="filteredStudents"
         :loading="loading"
@@ -295,7 +344,7 @@ onMounted(loadStudents)
 
           <template v-else-if="column.key === 'actions'">
             <div class="entity-actions">
-              <a-button type="link" @click="openEditModal(record)">
+              <a-button type="text" size="small" @click="openEditModal(record)">
                 <EditOutlined />
                 Sửa
               </a-button>
@@ -305,7 +354,7 @@ onMounted(loadStudents)
                 cancel-text="Huỷ"
                 @confirm="() => handleDelete(record)"
               >
-                <a-button type="link" danger>
+                <a-button type="text" size="small" danger>
                   <DeleteOutlined />
                   Xoá
                 </a-button>
@@ -328,6 +377,9 @@ onMounted(loadStudents)
       @cancel="closeModal"
     >
       <a-form ref="formRef" :model="formState" :rules="rules" layout="vertical">
+        <a-divider orientation="left">
+          <span class="form-section-label">Thông tin cá nhân</span>
+        </a-divider>
         <a-row :gutter="16">
           <a-col :xs="24" :md="12">
             <a-form-item label="Họ và tên" name="fullName">
@@ -364,6 +416,12 @@ onMounted(loadStudents)
               />
             </a-form-item>
           </a-col>
+        </a-row>
+
+        <a-divider orientation="left">
+          <span class="form-section-label">Thông tin ghi danh</span>
+        </a-divider>
+        <a-row :gutter="16">
           <a-col :xs="24" :md="12">
             <a-form-item label="Ngày ghi danh" name="enrolledAt">
               <a-date-picker
