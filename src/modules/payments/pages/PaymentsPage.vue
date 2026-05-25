@@ -136,33 +136,35 @@
           <!-- Thao tác -->
           <template v-else-if="column.key === 'actions'">
             <div class="action-buttons">
-              <a-button
-                v-if="record.status !== 'Paid'"
-                size="small"
-                style="color:#2e7d32; border-color:#2e7d32"
-                @click="openPayDialog(record)"
-              >
-                <template #icon><DollarOutlined /></template>
-                Thanh toán
-              </a-button>
-              <a-button
-                size="small"
-                style="color:#1890ff; border-color:#1890ff"
-                @click="openEditDialog(record)"
-              >
-                <template #icon><EditOutlined /></template>
-                Sửa
-              </a-button>
+              <a-tooltip title="Thanh toán" v-if="record.status !== 'Paid'">
+                <a-button
+                  size="small"
+                  style="color:#2e7d32; border-color:#2e7d32"
+                  @click="openPayDialog(record)"
+                >
+                  <template #icon><DollarOutlined /></template>
+                </a-button>
+              </a-tooltip>
+              <a-tooltip title="Sửa">
+                <a-button
+                  size="small"
+                  style="color:#1890ff; border-color:#1890ff"
+                  @click="openEditDialog(record)"
+                >
+                  <template #icon><EditOutlined /></template>
+                </a-button>
+              </a-tooltip>
               <a-popconfirm
                 title="Xóa hóa đơn này?"
                 ok-text="Xóa"
                 cancel-text="Hủy"
                 @confirm="confirmDeletePayment(record)"
               >
-                <a-button size="small" danger>
-                  <template #icon><DeleteOutlined /></template>
-                  Xóa
-                </a-button>
+                <a-tooltip title="Xóa">
+                  <a-button size="small" danger>
+                    <template #icon><DeleteOutlined /></template>
+                  </a-button>
+                </a-tooltip>
               </a-popconfirm>
             </div>
           </template>
@@ -348,6 +350,7 @@ import {
   CheckCircleFilled,
 } from '@ant-design/icons-vue'
 import { message } from 'ant-design-vue'
+import { Tooltip } from 'ant-design-vue'
 import { usePaymentStore } from '@/stores/payment'
 import { createPayment, updatePayment, payInvoice, deletePayment } from '@/modules/payments/api/paymentApi'
 
@@ -438,7 +441,7 @@ const columns = [
     key: 'actions',
     align: 'center',
     fixed: 'right',
-    width: 280,
+    width: 140,
   },
 ]
 
@@ -806,9 +809,9 @@ onMounted(() => payment.fetchInvoices())
 
 .action-buttons {
   display: flex;
-  gap: 6px;
+  gap: 4px;
   justify-content: center;
-  flex-wrap: wrap;
+  align-items: center;
 }
 
 /* Pay Modal */
