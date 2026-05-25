@@ -1,24 +1,10 @@
 import axios from 'axios'
 
-<<<<<<< HEAD
-const tokenStorageKey = 'educenter_access_token'
-const devFallbackApiBaseUrl = String(import.meta.env.VITE_API_FALLBACK_BASE_URL ?? '')
-  .trim()
-  .replace(/\/+$/, '')
-=======
 const tokenStorageKey = 'educenter_token'
->>>>>>> cdd52d2e3a3c2342978ee1b688dbe713f7070834
 
 export function createHttpClient(baseURL) {
-  const resolvedBaseUrl = String(baseURL ?? '').trim().replace(/\/+$/, '')
-  if (!resolvedBaseUrl) {
-    throw new Error(
-      'Missing API base URL. Please define VITE_API_BASE_URL in .env and restart Vite dev server.',
-    )
-  }
-
   const client = axios.create({
-    baseURL: resolvedBaseUrl,
+    baseURL,
     timeout: 10000,
   })
 
@@ -30,28 +16,6 @@ export function createHttpClient(baseURL) {
 
     return config
   })
-
-  client.interceptors.response.use(
-    (response) => response,
-    async (error) => {
-      const requestConfig = error?.config
-      const isNetworkError = !error?.response
-      const shouldRetryWithFallback =
-        import.meta.env.DEV &&
-        !!devFallbackApiBaseUrl &&
-        isNetworkError &&
-        requestConfig &&
-        !requestConfig.__retriedWithFallback
-
-      if (!shouldRetryWithFallback) {
-        throw error
-      }
-
-      requestConfig.__retriedWithFallback = true
-      requestConfig.baseURL = devFallbackApiBaseUrl
-      return client.request(requestConfig)
-    },
-  )
 
   return client
 }
