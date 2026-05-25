@@ -2,7 +2,7 @@ import { API_BASE_URLS } from '@/config/apiBaseUrls'
 import { createHttpClient } from '@/services/httpClient'
 
 const client = createHttpClient(API_BASE_URLS.course)
-const COURSE_ENDPOINT = '/courses'
+const CLASS_ENDPOINT = '/classes'
 
 function normalizeApiEnvelope(response, fallbackMessage = 'Request completed.') {
   const payload = response?.data
@@ -74,31 +74,31 @@ function request(method, url, options) {
   })
 }
 
-export function extractCourseApiErrorMessage(error, fallback = 'Course API request failed.') {
+export function extractClassApiErrorMessage(error, fallback = 'Class API request failed.') {
   return error?.response?.data?.message || error?.apiMessage || error?.message || fallback
 }
 
-export async function getCourses(params = {}) {
-  const response = await request('get', COURSE_ENDPOINT, { params })
-  return toArray(extractEnvelopeData(response, 'Failed to load courses.'))
+export async function getClasses(params = {}) {
+  const response = await request('get', CLASS_ENDPOINT, { params })
+  return toArray(extractEnvelopeData(response, 'Failed to load classes.'))
 }
 
-export async function getCourseById(id) {
-  const response = await request('get', `${COURSE_ENDPOINT}/${id}`)
-  return extractEnvelopeData(response, 'Failed to load course details.')
+export async function getClassById(id) {
+  const response = await request('get', `${CLASS_ENDPOINT}/${id}`)
+  return extractEnvelopeData(response, 'Failed to load class details.')
 }
 
-export async function createCourse(payload) {
-  const response = await request('post', COURSE_ENDPOINT, { payload })
-  return extractEnvelopeData(response, 'Failed to create course.')
+export async function createClass(payload) {
+  const response = await request('post', CLASS_ENDPOINT, { payload })
+  return extractEnvelopeData(response, 'Failed to create class.')
 }
 
-export async function updateCourse(id, payload) {
-  const response = await request('put', `${COURSE_ENDPOINT}/${id}`, { payload })
-  return extractEnvelopeData(response, 'Failed to update course.')
+export async function updateClass(id, payload) {
+  const response = await request('put', `${CLASS_ENDPOINT}/${id}`, { payload })
+  return extractEnvelopeData(response, 'Failed to update class.')
 }
 
-export async function deleteCourse(id) {
-  const response = await request('delete', `${COURSE_ENDPOINT}/${id}`)
-  return extractEnvelopeData(response, 'Failed to delete course.')
+export async function deleteClass(id) {
+  const response = await request('delete', `${CLASS_ENDPOINT}/${id}`)
+  return extractEnvelopeData(response, 'Failed to delete class.')
 }
