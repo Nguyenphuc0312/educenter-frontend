@@ -1,10 +1,17 @@
 import axios from 'axios'
 
-const tokenStorageKey = 'educenter_token'
+const tokenStorageKey = 'educenter_access_token'
 
 export function createHttpClient(baseURL) {
+  const resolvedBaseUrl = String(baseURL ?? '').trim().replace(/\/+$/, '')
+  if (!resolvedBaseUrl) {
+    throw new Error(
+      'Missing API base URL. Please define VITE_API_BASE_URL in .env and restart Vite dev server.',
+    )
+  }
+
   const client = axios.create({
-    baseURL,
+    baseURL: resolvedBaseUrl,
     timeout: 10000,
   })
 
@@ -16,6 +23,13 @@ export function createHttpClient(baseURL) {
 
     return config
   })
+
+  client.interceptors.response.use(
+    (response) => response,
+    async (error) => {
+      throw error
+    },
+  )
 
   return client
 }
