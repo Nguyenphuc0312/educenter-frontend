@@ -131,7 +131,7 @@ async function loadEnrollments() {
 }
 
 async function reloadAll() {
-  await Promise.all([loadStudents(), loadEnrollments()])
+  await Promise.allSettled([loadStudents(), loadEnrollments()])
 }
 
 async function submitForm() {
@@ -198,39 +198,65 @@ onMounted(reloadAll)
       </div>
 
       <div class="module-hero__actions">
-        <a-button
-          :icon="h(ReloadOutlined)"
-          :loading="loading || studentLoading"
-          @click="reloadAll"
-        >
-          Tải lại
-        </a-button>
-        <a-button type="primary" :icon="h(PlusOutlined)" @click="openCreateModal">
-          Thêm đăng ký
-        </a-button>
+        <span class="module-hero__actions-label">Quick actions</span>
+        <span class="module-hero__actions-note">
+          Link students with a course id and keep the enrollment state in sync.
+        </span>
+        <div class="module-hero__actions-stack">
+          <a-button
+            :icon="h(ReloadOutlined)"
+            :loading="loading || studentLoading"
+            @click="reloadAll"
+          >
+            Tải lại
+          </a-button>
+          <a-button type="primary" :icon="h(PlusOutlined)" @click="openCreateModal">
+            Thêm đăng ký
+          </a-button>
+        </div>
       </div>
     </a-card>
 
     <div class="module-metrics">
       <a-card class="module-metric-card" :bordered="false">
-        <div class="module-metric-label">Tổng đăng ký</div>
-        <div class="module-metric-value">{{ totalEnrollments }}</div>
-        <div class="module-metric-footnote">Toàn bộ bản ghi</div>
+        <div class="metric-card-header">
+          <div class="metric-icon-circle metric-icon-circle--blue">
+            <BookOutlined />
+          </div>
+          <span class="metric-trend-badge metric-trend-badge--blue">Tổng cộng</span>
+        </div>
+        <div class="metric-card-value">{{ totalEnrollments }}</div>
+        <div class="metric-card-label">Tổng đăng ký</div>
       </a-card>
       <a-card class="module-metric-card" :bordered="false">
-        <div class="module-metric-label">Enrolled</div>
-        <div class="module-metric-value">{{ enrolledCount }}</div>
-        <div class="module-metric-footnote">Đang theo học</div>
+        <div class="metric-card-header">
+          <div class="metric-icon-circle metric-icon-circle--green">
+            <i class="metric-icon-symbol">✔</i>
+          </div>
+          <span class="metric-trend-badge metric-trend-badge--green">Enrolled</span>
+        </div>
+        <div class="metric-card-value">{{ enrolledCount }}</div>
+        <div class="metric-card-label">Đang theo học</div>
       </a-card>
       <a-card class="module-metric-card" :bordered="false">
-        <div class="module-metric-label">Pending</div>
-        <div class="module-metric-value">{{ pendingCount }}</div>
-        <div class="module-metric-footnote">Chờ xử lý</div>
+        <div class="metric-card-header">
+          <div class="metric-icon-circle metric-icon-circle--amber">
+            <i class="metric-icon-symbol">⏳</i>
+          </div>
+          <span class="metric-trend-badge metric-trend-badge--amber">Pending</span>
+        </div>
+        <div class="metric-card-value">{{ pendingCount }}</div>
+        <div class="metric-card-label">Chờ xử lý</div>
       </a-card>
       <a-card class="module-metric-card" :bordered="false">
-        <div class="module-metric-label">Completed</div>
-        <div class="module-metric-value">{{ completedCount }}</div>
-        <div class="module-metric-footnote">Đã hoàn thành</div>
+        <div class="metric-card-header">
+          <div class="metric-icon-circle metric-icon-circle--violet">
+            <i class="metric-icon-symbol">🎓</i>
+          </div>
+          <span class="metric-trend-badge metric-trend-badge--violet">Completed</span>
+        </div>
+        <div class="metric-card-value">{{ completedCount }}</div>
+        <div class="metric-card-label">Đã hoàn thành</div>
       </a-card>
     </div>
 
@@ -243,9 +269,40 @@ onMounted(reloadAll)
           :prefix="h(SearchOutlined)"
           allow-clear
         />
+        <div class="toolbar-filters">
+          <button
+            :class="['filter-pill', searchText === '' ? 'filter-pill--active' : '']"
+            @click="searchText = ''"
+          >Tất cả</button>
+          <button
+            :class="['filter-pill', searchText === 'enrolled' ? 'filter-pill--active-green filter-pill' : '']"
+            @click="searchText = 'enrolled'"
+          >
+            <span class="filter-pill__dot" style="background:#16a34a"></span>
+            Enrolled
+          </button>
+          <button
+            :class="['filter-pill', searchText === 'pending' ? 'filter-pill--active-amber filter-pill' : '']"
+            @click="searchText = 'pending'"
+          >
+            <span class="filter-pill__dot" style="background:#d97706"></span>
+            Pending
+          </button>
+          <button
+            :class="['filter-pill', searchText === 'completed' ? 'filter-pill--active-violet filter-pill' : '']"
+            @click="searchText = 'completed'"
+          >
+            <span class="filter-pill__dot" style="background:#7c3aed"></span>
+            Completed
+          </button>
+        </div>
+        <div class="module-toolbar-count">
+          Hiển thị <strong>{{ filteredEnrollments.length }}</strong> / {{ totalEnrollments }}
+        </div>
       </div>
 
       <a-table
+        class="module-table"
         :columns="columns"
         :data-source="filteredEnrollments"
         :loading="loading || studentLoading"
@@ -267,7 +324,10 @@ onMounted(reloadAll)
           </template>
 
           <template v-else-if="column.key === 'courseId'">
-            <a-tag color="blue">Course #{{ record.courseId }}</a-tag>
+            <a-tag color="blue" style="display: inline-flex; align-items: center; gap: 4px;">
+              <span>📖</span>
+              <span>ID: {{ record.courseId }}</span>
+            </a-tag>
           </template>
 
           <template v-else-if="column.key === 'enrolledDate'">
@@ -280,7 +340,7 @@ onMounted(reloadAll)
 
           <template v-else-if="column.key === 'actions'">
             <div class="entity-actions">
-              <a-button type="link" @click="openEditModal(record)">
+              <a-button type="text" size="small" @click="openEditModal(record)">
                 <EditOutlined />
                 Sửa
               </a-button>
@@ -290,7 +350,7 @@ onMounted(reloadAll)
                 cancel-text="Huỷ"
                 @confirm="() => handleDelete(record)"
               >
-                <a-button type="link" danger>
+                <a-button type="text" size="small" danger>
                   <DeleteOutlined />
                   Xoá
                 </a-button>

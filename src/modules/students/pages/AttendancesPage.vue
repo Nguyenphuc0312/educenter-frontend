@@ -141,7 +141,7 @@ async function loadAttendances() {
 }
 
 async function reloadAll() {
-  await Promise.all([loadStudents(), loadAttendances()])
+  await Promise.allSettled([loadStudents(), loadAttendances()])
 }
 
 async function submitForm() {
@@ -209,39 +209,68 @@ onMounted(reloadAll)
       </div>
 
       <div class="module-hero__actions">
-        <a-button
-          :icon="h(ReloadOutlined)"
-          :loading="loading || studentLoading"
-          @click="reloadAll"
-        >
-          Tải lại
-        </a-button>
-        <a-button type="primary" :icon="h(PlusOutlined)" @click="openCreateModal">
-          Thêm điểm danh
-        </a-button>
+        <span class="module-hero__actions-label">Quick actions</span>
+        <span class="module-hero__actions-note">
+          Record attendance by schedule and add a note when needed.
+        </span>
+        <div class="module-hero__actions-stack">
+          <a-button
+            :icon="h(ReloadOutlined)"
+            :loading="loading || studentLoading"
+            @click="reloadAll"
+          >
+            Tải lại
+          </a-button>
+          <a-button type="primary" :icon="h(PlusOutlined)" @click="openCreateModal">
+            Thêm điểm danh
+          </a-button>
+        </div>
       </div>
     </a-card>
 
     <div class="module-metrics">
       <a-card class="module-metric-card" :bordered="false">
-        <div class="module-metric-label">Tổng điểm danh</div>
-        <div class="module-metric-value">{{ totalAttendances }}</div>
-        <div class="module-metric-footnote">Toàn bộ bản ghi</div>
+        <div class="metric-card-header">
+          <div class="metric-icon-circle metric-icon-circle--blue">
+            <CheckSquareOutlined />
+          </div>
+          <span class="metric-trend-badge metric-trend-badge--blue">Tổng cộng</span>
+        </div>
+        <div class="metric-card-value">{{ totalAttendances }}</div>
+        <div class="metric-card-label">Tổng điểm danh</div>
       </a-card>
       <a-card class="module-metric-card" :bordered="false">
-        <div class="module-metric-label">Có mặt</div>
-        <div class="module-metric-value">{{ presentCount }}</div>
-        <div class="module-metric-footnote">IsPresent = true</div>
+        <div class="metric-card-header">
+          <div class="metric-icon-circle metric-icon-circle--green">
+            <i class="metric-icon-symbol">✔</i>
+          </div>
+          <span class="metric-trend-badge metric-trend-badge--green">Present</span>
+        </div>
+        <div class="metric-card-value">{{ presentCount }}</div>
+        <div class="metric-card-label">Có mặt</div>
       </a-card>
       <a-card class="module-metric-card" :bordered="false">
-        <div class="module-metric-label">Vắng mặt</div>
-        <div class="module-metric-value">{{ absentCount }}</div>
-        <div class="module-metric-footnote">IsPresent = false</div>
+        <div class="metric-card-header">
+          <div class="metric-icon-circle metric-icon-circle--rose">
+            <i class="metric-icon-symbol">✖</i>
+          </div>
+          <span class="metric-trend-badge metric-trend-badge--rose">Absent</span>
+        </div>
+        <div class="metric-card-value">{{ absentCount }}</div>
+        <div class="metric-card-label">Vắng mặt</div>
       </a-card>
       <a-card class="module-metric-card" :bordered="false">
-        <div class="module-metric-label">Tỉ lệ đi học</div>
-        <div class="module-metric-value">{{ attendanceRate }}%</div>
-        <div class="module-metric-footnote">Có mặt / tổng số</div>
+        <div class="metric-card-header">
+          <div class="metric-icon-circle metric-icon-circle--teal">
+            <i class="metric-icon-symbol">%</i>
+          </div>
+          <span class="metric-trend-badge metric-trend-badge--teal">{{ attendanceRate }}%</span>
+        </div>
+        <div class="metric-card-value">{{ attendanceRate }}<span style="font-size:18px;font-weight:600;">%</span></div>
+        <div class="metric-card-label">Tỉ lệ đi học</div>
+        <div class="metric-rate-bar">
+          <div class="metric-rate-bar__fill" :style="{ width: attendanceRate + '%' }"></div>
+        </div>
       </a-card>
     </div>
 
@@ -254,9 +283,33 @@ onMounted(reloadAll)
           :prefix="h(SearchOutlined)"
           allow-clear
         />
+        <div class="toolbar-filters">
+          <button
+            :class="['filter-pill', searchText === '' ? 'filter-pill--active' : '']"
+            @click="searchText = ''"
+          >Tất cả</button>
+          <button
+            :class="['filter-pill', searchText === 'present' ? 'filter-pill--active-green filter-pill' : '']"
+            @click="searchText = 'present'"
+          >
+            <span class="filter-pill__dot" style="background:#16a34a"></span>
+            Có mặt
+          </button>
+          <button
+            :class="['filter-pill', searchText === 'absent' ? 'filter-pill--active-rose filter-pill' : '']"
+            @click="searchText = 'absent'"
+          >
+            <span class="filter-pill__dot" style="background:#e11d48"></span>
+            Vắng mặt
+          </button>
+        </div>
+        <div class="module-toolbar-count">
+          Hiển thị <strong>{{ filteredAttendances.length }}</strong> / {{ totalAttendances }}
+        </div>
       </div>
 
       <a-table
+        class="module-table"
         :columns="columns"
         :data-source="filteredAttendances"
         :loading="loading || studentLoading"
@@ -286,7 +339,17 @@ onMounted(reloadAll)
           </template>
 
           <template v-else-if="column.key === 'state'">
-            <a-tag :color="attendanceStateColor(record.isPresent)">
+            <a-tag :color="attendanceStateColor(record.isPresent)" style="display: inline-flex; align-items: center;">
+              <span
+                :style="{
+                  display: 'inline-block',
+                  width: '6px',
+                  height: '6px',
+                  borderRadius: '50%',
+                  backgroundColor: record.isPresent ? '#16a34a' : '#e11d48',
+                  marginRight: '6px'
+                }"
+              ></span>
               {{ attendanceStateLabel(record.isPresent) }}
             </a-tag>
           </template>
@@ -297,7 +360,7 @@ onMounted(reloadAll)
 
           <template v-else-if="column.key === 'actions'">
             <div class="entity-actions">
-              <a-button type="link" @click="openEditModal(record)">
+              <a-button type="text" size="small" @click="openEditModal(record)">
                 <EditOutlined />
                 Sửa
               </a-button>
@@ -307,7 +370,7 @@ onMounted(reloadAll)
                 cancel-text="Huỷ"
                 @confirm="() => handleDelete(record)"
               >
-                <a-button type="link" danger>
+                <a-button type="text" size="small" danger>
                   <DeleteOutlined />
                   Xoá
                 </a-button>

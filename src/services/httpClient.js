@@ -1,9 +1,13 @@
 import axios from 'axios'
 
+<<<<<<< HEAD
 const tokenStorageKey = 'educenter_access_token'
 const devFallbackApiBaseUrl = String(import.meta.env.VITE_API_FALLBACK_BASE_URL ?? '')
   .trim()
   .replace(/\/+$/, '')
+=======
+const tokenStorageKey = 'educenter_token'
+>>>>>>> cdd52d2e3a3c2342978ee1b688dbe713f7070834
 
 export function createHttpClient(baseURL) {
   const resolvedBaseUrl = String(baseURL ?? '').trim().replace(/\/+$/, '')
