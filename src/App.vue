@@ -164,7 +164,7 @@ const ActiveComponent = computed(() => pages[activePage.value] ?? HomeView)
       </div>
     </a-layout-sider>
 
-    <a-layout>
+    <a-layout class="main-layout">
       <a-layout-header class="app-header">
         <div class="header-copy">
           <span class="header-label">{{ activePageMeta.group }}</span>
@@ -191,3 +191,198 @@ const ActiveComponent = computed(() => pages[activePage.value] ?? HomeView)
     </a-layout>
   </a-layout>
 </template>
+
+<style>
+html, body, #app {
+  height: 100%;
+  overflow: hidden;
+}
+
+.app-shell {
+  height: 100vh;
+  overflow: hidden;
+}
+
+.app-shell .ant-layout-sider {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: 100;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0,0,0,0.15) transparent;
+}
+
+.app-shell .ant-layout-sider::-webkit-scrollbar {
+  width: 4px;
+}
+.app-shell .ant-layout-sider::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.15);
+  border-radius: 2px;
+}
+
+.main-layout {
+  margin-left: 260px;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: white !important;
+  padding: 20px 32px !important;
+  height: auto !important;
+  line-height: normal !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+
+.header-copy .header-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #888;
+  font-weight: 600;
+}
+
+.header-copy h1 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a1a2e;
+}
+
+.header-copy p {
+  margin: 0;
+  font-size: 12px;
+  color: #888;
+}
+
+.header-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-search {
+  width: 220px;
+  border-radius: 8px;
+}
+
+.header-icon-button {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #2e7d32;
+  color: white;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.app-content {
+  height: calc(100vh - 80px);
+  overflow-y: auto;
+  padding: 0;
+  background: #f5f5f5;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0,0,0,0.12) transparent;
+}
+
+.app-content::-webkit-scrollbar {
+  width: 6px;
+}
+.app-content::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.12);
+  border-radius: 3px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.brand-mark {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #2e7d32, #43a047);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 800;
+  color: white;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(46,125,50,0.3);
+}
+
+.brand-copy {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-copy strong {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1a1a2e;
+}
+
+.brand-copy span {
+  font-size: 10px;
+  color: #888;
+}
+
+.sidebar-menu {
+  border-right: none !important;
+}
+
+.sidebar-foot {
+  padding: 16px 20px;
+  border-top: 1px solid rgba(0,0,0,0.06);
+  font-size: 10px;
+  color: #aaa;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sidebar-foot span:first-child {
+  font-weight: 700;
+  color: #52c41a;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sidebar-foot strong {
+  font-size: 12px;
+  color: #333;
+}
+
+.sidebar-foot small {
+  font-family: monospace;
+  color: #888;
+}
+</style>
